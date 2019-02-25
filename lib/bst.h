@@ -34,8 +34,33 @@ public:
     root ->is_red = false;
   }
 
-  void remove (T val) {
-    std::cout << "remove: todo" << std::endl;
+  Node<T>* remove (T val) {
+    if (!root) {
+      return NULL;
+    }
+    auto left = root ->left;
+    auto right = root ->right;
+    if (!left && !right) {
+      if (root ->val = val) {
+        auto ret = root;
+        root = NULL;
+        return ret;
+      } else {
+        return NULL;
+      }
+    }
+    // root及左右都是2节点，变成4节点
+    if (!IS_3(root) && !IS_3(left) && !IS_3(right)) {
+      left ->is_red = true;
+      right ->is_red = true;
+    }
+
+    auto res_rm = remove_imp(root, val);
+    root = res_rm.first;
+    if (root) {
+      root ->is_red = false;
+    }
+    return res_rm.second;
   }
 
   Node<T>* remove_min () {
@@ -44,16 +69,10 @@ public:
     }
     auto left = root ->left;
     auto right = root ->right;
-    if (!right) {
-      if (left) {
-        assert(left ->red());
-        node ->left = NULL;
-        return left;
-      } else {
-        auto node = root;
-        root = NULL;
-        return node 
-      }
+    if (!left && !right) {
+      auto ret = root;
+      root = NULL;
+      return ret;
     }
 
     // root及左右都是2节点，变成4节点
@@ -63,6 +82,9 @@ public:
     }
     auto res_rm = remove_min_imp(root);
     root = res_rm.first;
+    if (root) {
+      root ->is_red = false;
+    }
     return res_rm.second;
   }
 
@@ -208,5 +230,8 @@ private:
     }
 
     return std::make_pair(node, rm);
+  }
+
+  std::pair<Node<T> *, Node<T> *> remove_imp(Node<T> *node, T val) {
   }
 };
