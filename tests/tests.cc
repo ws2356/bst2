@@ -7,7 +7,7 @@ using std::string;
 int main (int argc, char **argv)  {
   auto tree = new Bst<int>();
   
-  const int N = 10000000;
+  const int N = 1000000;
   // 10,000,000 takes 30 seconds on 2013 macbook air
   for (auto i = 1; i <= N; i++) {
     tree ->insert(i);
@@ -19,6 +19,7 @@ int main (int argc, char **argv)  {
     auto rm = tree ->remove(i);
     if (rm && rm ->val == i) {
 //      tree ->print(tree ->root);
+      delete rm;
     } else {
       if (rm) {
         println(string("remove failed, really is: ") + std::to_string(i));
@@ -27,7 +28,11 @@ int main (int argc, char **argv)  {
       }
       return 1;
     }
-    delete rm;
+
+    // real slow
+//    if (!Bst<int>::verify(tree ->root)) {
+//      return 1;
+//    }
   }
 
   delete tree;

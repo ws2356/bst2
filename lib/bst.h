@@ -621,5 +621,32 @@ void print(Node<T> *node) {
   }
   ::println("");
 }
+
+static bool verify(Node<T> *node, int level = 0) {
+  if (!node) {
+    return true;
+  }
+
+  auto left = node ->left;
+  auto right = node ->right;
+
+  if (level == 0 && IS_RED(node)) {
+    return false;
+  }
+
+  if (IS_RED(right)) {
+    return false;
+  }
+
+  if (IS_RED(node) && IS_RED(left)) {
+    return false;
+  }
+
+  if (!verify(left, level + 1)) {
+    return false;
+  }
+
+  return verify(right, level + 1);
+}
 #endif
 };
