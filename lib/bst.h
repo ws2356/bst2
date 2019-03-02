@@ -146,7 +146,7 @@ public:
     return res_rm.second;
   }
 
-private:
+public:
   Node<T> *root;
 
 private:
@@ -329,7 +329,7 @@ private:
       node2 ->is_red = false;
       node2 ->left ->is_red = true;
       node2 ->right ->is_red = true;
-      return rotate_left(node);
+      return node;
     } else {
       assert(false);
     }
@@ -431,7 +431,8 @@ private:
       if (node ->val > val) {
         if (left ->val == val) {
           if (IS_2(left ->left) && IS_2(left ->right)) {
-            form_4node(node, left);
+            res = node = form_4node(node, left);
+            
             auto res_rm = remove_imp(node ->left, val);
             node ->left = res_rm.first;
             rm = res_rm.second;
@@ -530,7 +531,7 @@ private:
             node ->right = res_rm.first;
             rm = res_rm.second;
           } else {
-            if (IS_2(left ->right) && IS_2(right)) {
+            if (IS_2(left ->right)) {
               res = node = form_4node(node, node);
             } else if (IS_2(right)) {
               res = node = borrow_from_left(node);
@@ -573,25 +574,47 @@ private:
   }
 #ifndef NDEBUG
 public:
-void print() {
-  if (!root) {
+void print(Node<T> *node) {
+  if (!node) {
     ::print("tree empty.");
     return;
   }
   ::println("tree:");
   std::queue<Node<T>*> q;
-  q.push(root);
+  q.push(node);
   while (!q.empty()) {
     const int n = q.size();
     for (auto i = 0; i < n; i++) {
       auto node = q.front();
       q.pop();
-      if (!node) {
-        ::print("null ");
+      if (!IS_2(node)) {
+        ::print(std::to_string(node ->left ->val) + ",");
+      }
+      
+      if (IS_4(node)) {
+        ::print(std::to_string(node ->val) + ",");
       } else {
         ::print(std::to_string(node ->val) + " ");
+      }
+      
+      if (IS_4(node)) {
+        ::print(std::to_string(node ->right ->val) + " ");
+      }
+      if (IS_LEAF(node)) {
+        continue;
+      }
+      if (IS_2(node)) {
         q.push(node ->left);
         q.push(node ->right);
+      } else if (IS_3(node)) {
+        q.push(node ->left ->left);
+        q.push(node ->left ->right);
+        q.push(node ->right);
+      } else {
+        q.push(node ->left ->left);
+        q.push(node ->left ->right);
+        q.push(node ->right ->left);
+        q.push(node ->right ->right);
       }
     }
     ::print("\n");

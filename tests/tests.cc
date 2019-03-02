@@ -6,31 +6,19 @@ using std::string;
 
 int main (int argc, char **argv)  {
   auto tree = new Bst<int>();
-  tree ->insert(1);
-
-  auto node = tree ->search(1);
-  if (!node || node ->val != 1) {
-    return 1;
-  }
-
-  auto rm = tree ->remove(1);
-  if (!rm || rm ->val != 1) {
-    return 1;
-  }
-  delete rm;
   
-  const int N = 4;
+  const int N = 10000000;
+  // 10,000,000 takes 30 seconds on 2013 macbook air
   for (auto i = 1; i <= N; i++) {
-    println("inserting: ");
     tree ->insert(i);
   }
-  tree ->print();
+//  tree ->print(tree ->root);
 
   for (auto i = 1; i <= N; i++) {
-    println(string("removing: ") + std::to_string(i));
+    // println(string("removing: ") + std::to_string(i));
     auto rm = tree ->remove(i);
     if (rm && rm ->val == i) {
-      tree ->print();
+//      tree ->print(tree ->root);
     } else {
       if (rm) {
         println(string("remove failed, really is: ") + std::to_string(i));
@@ -39,11 +27,7 @@ int main (int argc, char **argv)  {
       }
       return 1;
     }
-    auto rm_val = rm ->val;
     delete rm;
-    if (rm_val != i) {
-      return 1;
-    }
   }
 
   delete tree;
