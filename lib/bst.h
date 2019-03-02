@@ -1,4 +1,27 @@
+#include <cassert>
+#ifndef NDEBUG
+#include <queue>
+#include <string>
 #include <iostream>
+
+template <typename T>
+void print(T msg) {
+  std::cout << msg;
+}
+
+template <typename T>
+void println(T msg) {
+  print(msg);
+  std::cout << std::endl;
+}
+
+template <typename T>
+void print_exit(T msg) {
+  println<T>(msg);
+  exit(1);
+}
+
+#endif
 
 #define IS_2(n) (n && !n ->red() && (!n ->left || !n ->left ->red()) && (!n ->right || !n ->right ->red()))
 #define IS_3(n) (n && !n ->red() && n ->left && n ->left ->red() && (!n ->right || !n ->right ->red()))
@@ -42,7 +65,7 @@ public:
     auto left = root ->left;
     auto right = root ->right;
     if (!left && !right) {
-      if (root ->val = val) {
+      if (root ->val == val) {
         auto ret = root;
         root = NULL;
         return ret;
@@ -66,8 +89,8 @@ public:
           right = root ->right;
         }
         auto res_rm = remove_imp(root ->left, val);
-        root ->left = res_rm.first
-        return res_rm.second
+        root ->left = res_rm.first;
+        return res_rm.second;
       } else if (root ->val < val) {
         if (IS_2(right)) {
           root = borrow_from_left(root);
@@ -75,8 +98,8 @@ public:
           right = root ->right;
         }
         auto res_rm = remove_imp(right, val);
-        root ->right = res_rm.first
-        return ret_rm.second
+        root ->right = res_rm.first;
+        return res_rm.second;
       } else {
         if (IS_2(left)) {
           root = borrow_from_right(root);
@@ -199,9 +222,7 @@ private:
     if(!node ->right ->red()) {
       return node;
     }
-    if(!node ->red()) {
-      return node;
-    }
+
     node ->left ->is_red = false;
     node ->right ->is_red = false;
     node ->is_red = true;
@@ -244,13 +265,13 @@ private:
 
   static Node<T> *borrow_from_right(Node<T> *node) {
     if (IS_3(node)) {
-      assert(false, "no need");
+      assert(false);
     } else {
       auto parent = node;
       auto borrowed = node ->right ->left;
       auto borrowed_remain = node ->right;
       auto borrower = node ->left;
-      borrower >is_red = true;
+      borrower ->is_red = true;
       borrowed ->is_red = parent ->is_red;
       parent ->is_red = false;
       parent ->right = borrowed ->left;
@@ -289,7 +310,7 @@ private:
   static Node<T> *form_4node (Node<T> *node, Node<T> *node2) {
     if(IS_3(node)) {
       if (node == node2) {
-        ret = node ->left;
+        auto ret = node ->left;
         ret ->is_red = node ->is_red;
         node ->is_red = false;
         node ->left = ret ->right;
@@ -383,7 +404,7 @@ private:
     auto left = node ->left;
     auto right = node ->right;
     auto res = node;
-    auto rm = NULL;
+    Node<T> * rm = NULL;
     if (IS_LEAF(node)) {
       if (node ->val == val) {
         if (right) {
@@ -476,7 +497,7 @@ private:
               right = node ->right = borrow_from_left(right);
             }
             auto res_rm = remove_imp(right ->right, val);
-            right ->right = res.first;
+            right ->right = res_rm.first;
             rm = res_rm.second;
           } else {
             if (IS_2(right ->left)) {
@@ -540,14 +561,42 @@ private:
     }
     // 旋转变色
     if (!IS_RED(res ->left) && IS_RED(res ->right)) {
-      res = rotate_left(res)
+      res = rotate_left(res);
     }
     if (IS_RED(res ->left) && IS_RED(res ->left ->left)) {
-      res = rotate_right(res)
+      res = rotate_right(res);
     }
     if (IS_RED(res ->left) && IS_RED(res ->right)) {
-      res = flip_color(res)
+      res = flip_color(res);
     }
     return std::make_pair(res, rm);
   }
+#ifndef NDEBUG
+public:
+void print() {
+  if (!root) {
+    ::print("tree empty.");
+    return;
+  }
+  ::println("tree:");
+  std::queue<Node<T>*> q;
+  q.push(root);
+  while (!q.empty()) {
+    const int n = q.size();
+    for (auto i = 0; i < n; i++) {
+      auto node = q.front();
+      q.pop();
+      if (!node) {
+        ::print("null ");
+      } else {
+        ::print(std::to_string(node ->val) + " ");
+        q.push(node ->left);
+        q.push(node ->right);
+      }
+    }
+    ::print("\n");
+  }
+  ::println("");
+}
+#endif
 };
