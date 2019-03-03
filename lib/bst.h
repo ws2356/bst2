@@ -1,3 +1,6 @@
+#ifndef WS_RB_BST_H
+#define WS_RB_BST_H
+
 #include <cassert>
 #ifndef NDEBUG
 #include <queue>
@@ -650,3 +653,5 @@ static bool verify(Node<T> *node, int level = 0) {
 }
 #endif
 };
+
+#endif
